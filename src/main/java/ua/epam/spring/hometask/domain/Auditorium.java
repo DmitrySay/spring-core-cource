@@ -10,7 +10,7 @@ import java.util.stream.LongStream;
 /**
  * @author Yuriy_Tkach
  */
-public class Auditorium {
+public class Auditorium extends DomainObject{
 
     private String name;
 
@@ -19,6 +19,12 @@ public class Auditorium {
     private Set<Long> vipSeats = Collections.emptySet();
 
     public Auditorium() {
+    }
+
+    public Auditorium(String name, long numberOfSeats, Set<Long> vipSeats) {
+        this.name = name;
+        this.numberOfSeats = numberOfSeats;
+        this.vipSeats = vipSeats;
     }
 
     /**
@@ -87,4 +93,13 @@ public class Auditorium {
         return true;
     }
 
+
+    @Override
+    public String toString() {
+        return "Auditorium{" +
+                "name='" + name + '\'' +
+                ", numberOfSeats=" + numberOfSeats +
+                ", vipSeats=" + vipSeats +
+                "} " + super.getId();
+    }
 }
