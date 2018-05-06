@@ -50,13 +50,11 @@ public class TicketDaoTest extends AbstractJUnit4SpringContextTests {
     public void getAllTest() {
         Collection<Ticket> ticketsList = ticketDao.getAll();
         Assert.assertNotNull(ticketsList);
-        System.out.println(ticketsList);
     }
 
     @Test
     public void getTicketByIdTest() {
         Ticket ticket = ticketDao.getById(1L);
-        System.out.println(ticket);
         Assert.assertEquals(ticket, ticketEtalon);
     }
 }

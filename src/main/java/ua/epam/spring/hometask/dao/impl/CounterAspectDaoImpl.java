@@ -1,6 +1,7 @@
 package ua.epam.spring.hometask.dao.impl;
 
 import ua.epam.spring.hometask.dao.CounterAspectDao;
+import ua.epam.spring.hometask.domain.Event;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,7 @@ public class CounterAspectDaoImpl implements CounterAspectDao {
 
     private static Map<String, Long> eventsByNameStorage = new HashMap<>();
     private static Map<String, Long> eventsByPriceStorage = new HashMap<>();
+    private static Map<String, Long> eventsByTicketsStorage = new HashMap<>();
 
     @Override
     public void saveEventValueCouterByName(String eventName) {
@@ -41,4 +43,17 @@ public class CounterAspectDaoImpl implements CounterAspectDao {
     }
 
 
+    @Override
+    public void saveEventValueCouterByTicket(String eventName) {
+        if (eventsByTicketsStorage.containsKey(eventName)) {
+            eventsByTicketsStorage.put(eventName, (eventsByTicketsStorage.get(eventName) + 1L));
+        } else {
+            eventsByTicketsStorage.put(eventName, 1L);
+        }
+    }
+
+    @Override
+    public Map<String, Long> eventsByTicketsStorageGetAll() {
+        return eventsByTicketsStorage;
+    }
 }

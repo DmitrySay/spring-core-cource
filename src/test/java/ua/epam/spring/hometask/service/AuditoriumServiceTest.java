@@ -17,7 +17,7 @@ public class AuditoriumServiceTest {
 
     @Test
     public void getAllTest() {
-        System.out.println(auditoriumService.getAll());
+        Assert.assertNotNull(auditoriumService.getAll());
     }
 
     @Test

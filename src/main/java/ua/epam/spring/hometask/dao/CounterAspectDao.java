@@ -4,13 +4,16 @@ import java.util.Map;
 
 public interface CounterAspectDao {
 
-    public void saveEventValueCouterByName(String eventName);
+    void saveEventValueCouterByName(String eventName);
 
-    public Map<String, Long> eventsByNameStorageGetAll();
+    Map<String, Long> eventsByNameStorageGetAll();
 
+    Map<String, Long> eventsByPriceStorageGetAll();
 
-    public Map<String, Long> eventsByPriceStorageGetAll();
+    void saveEventValueCouterByPrice(String eventName);
 
-    public void saveEventValueCouterByPrice(String eventName);
+    void saveEventValueCouterByTicket(String eventName);
+
+    Map<String, Long> eventsByTicketsStorageGetAll();
 
 }

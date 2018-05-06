@@ -26,6 +26,9 @@
     <bean id="auditoriumService" class="ua.epam.spring.hometask.service.impl.AuditoriumServiceImpl"/>
     <bean id="eventService" class="ua.epam.spring.hometask.service.impl.EventServiceImpl"/>
     <bean id="counterAspectDao" class="ua.epam.spring.hometask.dao.impl.CounterAspectDaoImpl"/>
+    <bean id="discountAspectDao" class="ua.epam.spring.hometask.dao.impl.DiscountAspectDaoImpl"/>
+
+
     <bean id="discountService" class="ua.epam.spring.hometask.service.impl.DiscountServiceImpl">
         <property name="strategies">
             <list>
