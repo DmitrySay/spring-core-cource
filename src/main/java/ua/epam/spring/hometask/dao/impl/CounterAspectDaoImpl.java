@@ -1,12 +1,12 @@
 package ua.epam.spring.hometask.dao.impl;
 
+import org.springframework.stereotype.Component;
 import ua.epam.spring.hometask.dao.CounterAspectDao;
-import ua.epam.spring.hometask.domain.Event;
 
 import java.util.HashMap;
 import java.util.Map;
 
-//@Repository
+@Component
 public class CounterAspectDaoImpl implements CounterAspectDao {
 
     private static Map<String, Long> eventsByNameStorage = new HashMap<>();

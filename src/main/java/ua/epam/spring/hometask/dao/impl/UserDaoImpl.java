@@ -1,5 +1,6 @@
 package ua.epam.spring.hometask.dao.impl;
 
+import org.springframework.stereotype.Repository;
 import ua.epam.spring.hometask.dao.UserDao;
 import ua.epam.spring.hometask.domain.User;
 
@@ -9,7 +10,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-//@Repository("userDao")
+@Repository("userDao")
 public class UserDaoImpl implements UserDao {
 
     private static Map<String, User> usersMap = new LinkedHashMap<>();

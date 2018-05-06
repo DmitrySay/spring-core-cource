@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import ua.epam.spring.hometask.config.AppConfigTest;
 import ua.epam.spring.hometask.dao.DiscountAspectDao;
 import ua.epam.spring.hometask.domain.Event;
 import ua.epam.spring.hometask.domain.User;
@@ -20,7 +21,7 @@ import java.time.Month;
 import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring-test.xml"})
+@ContextConfiguration(classes = {AppConfigTest.class})
 public class DiscountAspectTest {
 
     @Autowired

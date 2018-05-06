@@ -1,9 +1,11 @@
 package ua.epam.spring.hometask.strategy;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import ua.epam.spring.hometask.domain.Event;
 import ua.epam.spring.hometask.domain.User;
 
 import java.time.LocalDateTime;
+
 
 public class NTicketStrategy implements DiscountStrategy {
 

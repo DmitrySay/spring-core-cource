@@ -6,11 +6,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import ua.epam.spring.hometask.config.AppConfigTest;
 import ua.epam.spring.hometask.domain.User;
 
 import java.util.Collection;
 
-@ContextConfiguration(locations = {"classpath:spring-test.xml"})
+@ContextConfiguration(classes = {AppConfigTest.class})
 public class UserDaoTest extends AbstractJUnit4SpringContextTests {
 
     private User userEtalon;

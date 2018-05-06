@@ -31,6 +31,9 @@ public class Event extends DomainObject {
         this.auditoriums = auditoriums;
     }
 
+    public double getBasePrice() {
+        return basePrice;
+    }
 
     /**
      * Checks if event is aired on particular <code>dateTime</code> and assigns
@@ -163,7 +166,7 @@ public class Event extends DomainObject {
         this.airDates = airDates;
     }
 
-    public double getBasePrice() {
+    public double getBasePrice(double v) {
         return basePrice;
     }
 

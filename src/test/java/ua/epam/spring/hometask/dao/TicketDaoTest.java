@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import ua.epam.spring.hometask.config.AppConfigTest;
 import ua.epam.spring.hometask.domain.Event;
 import ua.epam.spring.hometask.domain.Ticket;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@ContextConfiguration(locations = {"classpath:spring-test.xml"})
+@ContextConfiguration(classes = {AppConfigTest.class})
 public class TicketDaoTest extends AbstractJUnit4SpringContextTests {
 
     private Ticket ticketEtalon;

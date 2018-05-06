@@ -1,5 +1,6 @@
 package ua.epam.spring.hometask.dao.impl;
 
+import org.springframework.stereotype.Repository;
 import ua.epam.spring.hometask.dao.TicketDao;
 import ua.epam.spring.hometask.domain.Ticket;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-//@Repository("ticketDao")
+@Repository
 public class TicketDaoImpl implements TicketDao {
 
     private static List<Ticket> ticketsList = new ArrayList<>();

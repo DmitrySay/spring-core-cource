@@ -1,11 +1,15 @@
 package ua.epam.spring.hometask.aspect;
 
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import ua.epam.spring.hometask.config.AppConfigTest;
 import ua.epam.spring.hometask.dao.CounterAspectDao;
 import ua.epam.spring.hometask.dao.EventDao;
 import ua.epam.spring.hometask.dao.TicketDao;
@@ -19,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring-test.xml"})
+@ContextConfiguration(classes = {AppConfigTest.class})
 public class CounterAspectTest {
 
     @Autowired

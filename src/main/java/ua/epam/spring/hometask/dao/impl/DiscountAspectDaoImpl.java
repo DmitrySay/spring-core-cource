@@ -1,12 +1,12 @@
 package ua.epam.spring.hometask.dao.impl;
 
+import org.springframework.stereotype.Component;
 import ua.epam.spring.hometask.dao.DiscountAspectDao;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
-//@Repository
+@Component
 public class DiscountAspectDaoImpl implements DiscountAspectDao {
 
     private Map<Class<?>, Long> discountCounterStorage = new HashMap<>();
