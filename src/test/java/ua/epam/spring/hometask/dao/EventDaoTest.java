@@ -28,14 +28,14 @@ public class EventDaoTest {
     public void initEventList() {
         eventList = new ArrayList<>(eventDao.getAll());
         event = eventList.get(0);
+        System.out.println(eventList);
 
     }
 
     @Test
     public void getEventTest() {
         Event currentEvent = eventDao.getEvent(event);
-       // System.out.println(event);
-      //  System.out.println(currentEvent);
+        System.out.println(currentEvent);
         Assert.assertEquals(event, currentEvent);
     }
 

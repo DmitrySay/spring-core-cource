@@ -184,6 +184,44 @@ public class EventDaoImpl implements EventDao {
 
             e.setAirDates(airDates);
 
+
+            //--------------------------------------------------------------------//
+            NavigableMap<LocalDateTime, String> auditoriumsName = new TreeMap<>();
+            jdbcTemplate.query("SELECT * FROM EVENT_AUDITORIUM WHERE event_name = ?", new Object[]{e.getName()},
+                    (resultSet) -> {
+
+                        Timestamp timestamp = resultSet.getTimestamp("event_airdate");
+                        LocalDateTime event_airdate = timestamp.toLocalDateTime();
+                        String auditorium_name = resultSet.getString("auditorium_name");
+
+                        auditoriumsName.put(event_airdate, auditorium_name);
+                    });
+
+
+            //--------------------------------------------------------------------//
+
+
+            NavigableMap<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
+
+            auditoriumsName.entrySet().forEach(a -> {
+                jdbcTemplate.query("SELECT * FROM AUDITORIUM where name = ?", new Object[]{a.getValue()},
+                        resultSet -> {
+                            Auditorium auditorium = new Auditorium();
+                            auditorium.setId(resultSet.getLong(1));
+                            auditorium.setName(resultSet.getString(2));
+                            auditorium.setNumberOfSeats(resultSet.getLong(3));
+                            Array vip_seats = resultSet.getArray(4);
+                            if (vip_seats != null) {
+                                Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
+                                auditorium.setVipSeats(vipSeats);
+                            }
+
+                            auditoriums.put(a.getKey(), auditorium);
+                        });
+
+            });
+            e.setAuditoriums(auditoriums);
+
             return e;
 
         });
