@@ -6,3 +6,6 @@ INSERT INTO user (firstName, lastName, email, birthDay) VALUES ('Anna','Pupkina'
 
 
 
+
+
+
