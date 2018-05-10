@@ -52,7 +52,8 @@ public class EventDaoImpl implements EventDao {
 
     @Override
     public void remove(@Nonnull Event event) {
-
+        jdbcTemplate.update("DELETE FROM EVENT_AUDITORIUM where event_name = ?",  event.getName());
+        jdbcTemplate.update("DELETE FROM event where name = ?",  event.getName());
     }
 
     @Override
@@ -165,6 +166,10 @@ public class EventDaoImpl implements EventDao {
         event.setAuditoriums(auditoriums);
 
         eventDao.save(event);
+
+        System.out.println(eventDao.getAll());
+
+        eventDao.remove(event);
 
         System.out.println(eventDao.getAll());
 
