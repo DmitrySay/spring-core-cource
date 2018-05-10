@@ -8,12 +8,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ua.epam.spring.hometask.config.AppConfigTest;
+import ua.epam.spring.hometask.config.AppConfig;
 import ua.epam.spring.hometask.dao.UserDao;
 import ua.epam.spring.hometask.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfigTest.class})
+@ContextConfiguration(classes = {AppConfig.class})
 public class UserServiceTest {
 
     @Autowired
@@ -22,17 +22,10 @@ public class UserServiceTest {
     @Autowired
     UserDao userDao;
 
-    @Before
-    public void initUsersMap() {
-        User user1 = new User(1L, "Andrey", "Pupkin", "andrey@epam.com");
-        User user2 = new User(2L, "Anna", "Pupkina", "anna@epam.com");
-        userDao.save(user1);
-        userDao.save(user2);
-    }
 
     @Test
-    public void getUserByEmailTest(){
+    public void getUserByEmailTest() {
         User user = userService.getUserByEmail("andrey@epam.com");
-        Assert.assertEquals(user.getEmail(),"andrey@epam.com");
+        Assert.assertEquals(user.getEmail(), "andrey@epam.com");
     }
 }

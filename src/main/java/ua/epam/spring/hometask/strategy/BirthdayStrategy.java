@@ -34,7 +34,7 @@ public class BirthdayStrategy implements DiscountStrategy {
 
     @Override
     public byte calculateDiscount(User user, Event event, LocalDateTime airDateTime, long numberOfTickets) {
-        LocalDateTime birthday = user.getBirthday();
+        LocalDate birthday = user.getBirthday();
         LocalDate currentday = LocalDate.now();
         LocalDate currentYearBirhtday = LocalDate.of(currentday.getYear(), birthday.getMonth(), birthday.getDayOfMonth());
 
