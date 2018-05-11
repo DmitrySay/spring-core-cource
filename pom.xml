@@ -20,7 +20,7 @@
     </properties>
 
     <build>
-        <resources>
+       <!-- <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
@@ -29,7 +29,7 @@
                     <include>**/*</include>
                 </includes>
             </resource>
-        </resources>
+        </resources>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -10,9 +10,13 @@ import ua.epam.spring.hometask.dao.EventDao;
 import ua.epam.spring.hometask.dao.TicketDao;
 import ua.epam.spring.hometask.dao.UserDao;
 import ua.epam.spring.hometask.domain.Event;
+import ua.epam.spring.hometask.domain.EventRating;
 import ua.epam.spring.hometask.domain.Ticket;
+import ua.epam.spring.hometask.domain.User;
 
 import javax.annotation.Nonnull;
+import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -25,44 +29,132 @@ public class TicketDaoImpl implements TicketDao {
     public TicketDaoImpl() {
     }
 
-
-    @Override
-    public Ticket save(@Nonnull Ticket ticket) {
-
-        return ticket;
-    }
-
     @Override
     public void remove(@Nonnull Ticket ticket) {
-
+        jdbcTemplate.update("DELETE FROM ticket where id = ?", ticket.getId());
     }
 
     @Override
     public Ticket getById(@Nonnull Long id) {
-        return null;
+        List<Ticket> tickets = jdbcTemplate.query("SELECT * FROM TICKET t JOIN user u " +
+                "ON t.user_id = u.id JOIN event e ON t.event_id =e.id WHERE t.id = ?", new Object[]{id}, (rs, rowNum) -> {
 
+            Ticket ticket = createTicket(rs);
+            User user = createUser(rs);
+            Event e = createEvent(rs);
+            ticket.setUser(user);
+            ticket.setEvent(e);
+            return ticket;
+        });
+        return tickets.isEmpty() ? null : tickets.get(0);
+    }
+
+
+    @Override
+    public Ticket save(@Nonnull Ticket ticket) {
+        Long count = 0L;
+
+        if (ticket.getId() != null) {
+            count = jdbcTemplate.queryForObject("SELECT count(*) FROM TICKET where id =?", new Object[]{ticket.getId()}, Long.class);
+        }
+
+        if (count == 0) {
+            jdbcTemplate.update("INSERT INTO TICKET (user_id, event_id, dateTime, seat) VALUES (?,?,?,?)",
+                    ticket.getUser().getId(),
+                    ticket.getEvent().getId(),
+                    Timestamp.valueOf(ticket.getDateTime()),
+                    ticket.getSeat()
+            );
+        } else {
+
+            jdbcTemplate.update("UPDATE TICKET SET user_id =?, event_id=?, dateTime=?, seat=? WHERE id =?",
+                    ticket.getUser().getId(),
+                    ticket.getEvent().getId(),
+                    Timestamp.valueOf(ticket.getDateTime()),
+                    ticket.getSeat(),
+                    ticket.getId()
+            );
+
+        }
+        return ticket;
     }
 
 
     @Override
     public Collection<Ticket> getAll() {
-        return null;
+
+        return jdbcTemplate.query("SELECT * FROM TICKET t JOIN user u " +
+                "ON t.user_id = u.id JOIN event e ON t.event_id =e.id", (rs, rowNum) -> {
+
+            Ticket ticket = createTicket(rs);
+            User user = createUser(rs);
+            Event e = createEvent(rs);
+            ticket.setUser(user);
+            ticket.setEvent(e);
+            return ticket;
+        });
     }
 
+    private Ticket createTicket(ResultSet rs) throws SQLException {
+        Ticket ticket = new Ticket();
+        ticket.setId(rs.getLong("id"));
+        Timestamp timestamp = rs.getTimestamp("dateTime");
+        LocalDateTime dateTime = timestamp.toLocalDateTime();
+        ticket.setDateTime(dateTime);
+        ticket.setSeat(rs.getLong("seat"));
+        return ticket;
+    }
+
+    private User createUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("user_id"));
+        user.setFirstName(rs.getString("firstName"));
+        user.setLastName(rs.getString("lastName"));
+        user.setEmail(rs.getString("email"));
+        Date date = rs.getDate("birthDay");
+        if (null != date) {
+            user.setBirthday(date.toLocalDate());
+        }
+        return user;
+    }
+
+    private Event createEvent(ResultSet rs) throws SQLException {
+        Event e = new Event();
+        e.setId(rs.getLong("event_id"));
+        e.setName(rs.getString("name"));
+        e.setBasePrice(rs.getDouble("basePrice"));
+        String ratingSql = rs.getString("rating");
+        EventRating rating = EventRating.valueOf(ratingSql);
+        e.setRating(rating);
+
+        Array array = rs.getArray("airDates");
+        Object[] objects = (Object[]) array.getArray();
+
+        NavigableSet<LocalDateTime> airDates = new TreeSet<>();
+
+        for (Object o : objects) {
+            Timestamp t = (Timestamp) o;
+            LocalDateTime localDateTime = t.toLocalDateTime();
+            airDates.add(localDateTime);
+        }
+        e.setAirDates(airDates);
+
+        return e;
+    }
+
+
     public static void main(String[] args) {
-        /*
-        selectStudent = "SELECT S.id, S.name, S.surname, S.enrolment_date, S.group_id, G.id, G.number, G.department  FROM `Student` S INNER JOIN `Group` G ON S.group_id = G.id WHERE S.id = ?;";
-         */
+
         ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
         TicketDao ticketDao = (TicketDao) ctx.getBean("ticketDao");
-        EventDao eventDao = (EventDao)ctx.getBean("eventDao");
-        UserDao userDao = (UserDao)ctx.getBean("userDao");
+        EventDao eventDao = (EventDao) ctx.getBean("eventDao");
+        UserDao userDao = (UserDao) ctx.getBean("userDao");
 
         List<Event> eventList = new ArrayList<>(eventDao.getAll());
-        //System.out.println(eventList);
 
-        Event  eventEtalon = eventList.get(0);
-        //System.out.println(eventEtalon);
+
+        Event eventEtalon = eventList.get(0);
+
 
         NavigableSet<LocalDateTime> airDates = new TreeSet<>();
         airDates.add(eventEtalon.getAirDates().iterator().next());
@@ -75,12 +167,15 @@ public class TicketDaoImpl implements TicketDao {
         ticket1.setEvent(eventEtalon);
 
 
-        //System.out.println(userDao.getAll());
-
         ticket1.setUser(userDao.getAll().iterator().next());
 
-        System.out.println(ticket1);
         ticketDao.save(ticket1);
+        System.out.println(ticketDao.getAll());
+
+        ticket1.setId(1L);
+        ticket1.setSeat(50);
+        ticketDao.save(ticket1);
+
         System.out.println(ticketDao.getAll());
 
     }

@@ -2,6 +2,7 @@ package ua.epam.spring.hometask.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ua.epam.spring.hometask.dao.EventDao;
 import ua.epam.spring.hometask.domain.Auditorium;
@@ -229,5 +230,4 @@ public class EventDaoImpl implements EventDao {
         return events.isEmpty() ? null : events.get(0);
 
     }
-
 }

@@ -31,6 +31,7 @@ public class DataBaseConfig {
         driverManagerDataSource.setUsername(user);
         driverManagerDataSource.setPassword(password);
 
+
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("classpath:create_script.sql")
