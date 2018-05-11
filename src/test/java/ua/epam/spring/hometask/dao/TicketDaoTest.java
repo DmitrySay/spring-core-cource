@@ -45,13 +45,12 @@ public class TicketDaoTest extends AbstractJUnit4SpringContextTests {
         ticketEtalon.setDateTime(LocalDateTime.now().plusDays(1));
         User user = userDao.getUserByEmail("andrey@epam.com");
         ticketEtalon.setUser(user);
-
         ticketDao.save(ticketEtalon);
     }
 
     @After
     public void tearDown() {
-       // ticketDao.remove(ticketEtalon);
+        ticketDao.remove(ticketEtalon);
     }
 
     @Test
@@ -62,7 +61,9 @@ public class TicketDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void getTicketByIdTest() {
-        Ticket ticket = ticketDao.getById(1L);
+        System.out.println(ticketDao.getAll());
+        //autoincrement
+        Ticket ticket = ticketDao.getById(2L);
         System.out.println("ticket " +ticket);
         Assert.assertEquals(ticket, ticketEtalon);
     }

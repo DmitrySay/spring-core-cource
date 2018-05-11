@@ -44,8 +44,10 @@ public class TicketDaoImpl implements TicketDao {
             Event e = createEvent(rs);
             ticket.setUser(user);
             ticket.setEvent(e);
+
             return ticket;
         });
+
         return tickets.isEmpty() ? null : tickets.get(0);
     }
 
@@ -58,7 +60,7 @@ public class TicketDaoImpl implements TicketDao {
             count = jdbcTemplate.queryForObject("SELECT count(*) FROM TICKET where id =?", new Object[]{ticket.getId()}, Long.class);
         }
 
-        if (count == 0) {
+        if (count.equals(0L)) {
             jdbcTemplate.update("INSERT INTO TICKET (user_id, event_id, dateTime, seat) VALUES (?,?,?,?)",
                     ticket.getUser().getId(),
                     ticket.getEvent().getId(),
@@ -140,43 +142,5 @@ public class TicketDaoImpl implements TicketDao {
         e.setAirDates(airDates);
 
         return e;
-    }
-
-
-    public static void main(String[] args) {
-
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
-        TicketDao ticketDao = (TicketDao) ctx.getBean("ticketDao");
-        EventDao eventDao = (EventDao) ctx.getBean("eventDao");
-        UserDao userDao = (UserDao) ctx.getBean("userDao");
-
-        List<Event> eventList = new ArrayList<>(eventDao.getAll());
-
-
-        Event eventEtalon = eventList.get(0);
-
-
-        NavigableSet<LocalDateTime> airDates = new TreeSet<>();
-        airDates.add(eventEtalon.getAirDates().iterator().next());
-        LocalDateTime dateTime = eventEtalon.getAuditoriums().keySet().iterator().next();
-        Ticket ticket1 = new Ticket();
-
-        ticket1.setSeat(10L);
-        ticket1.setDateTime(LocalDateTime.now().plusDays(1));
-
-        ticket1.setEvent(eventEtalon);
-
-
-        ticket1.setUser(userDao.getAll().iterator().next());
-
-        ticketDao.save(ticket1);
-        System.out.println(ticketDao.getAll());
-
-        ticket1.setId(1L);
-        ticket1.setSeat(50);
-        ticketDao.save(ticket1);
-
-        System.out.println(ticketDao.getAll());
-
     }
 }

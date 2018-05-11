@@ -4,14 +4,14 @@ CREATE TABLE IF NOT EXISTS USER (
   id           BIGINT NOT NULL AUTO_INCREMENT,
   firstName    VARCHAR(30),
   lastName     VARCHAR(30),
-  email        VARCHAR(50) UNIQUE,
+  email        VARCHAR(50) /*UNIQUE*/,
   birthDay     TIMESTAMP,
   PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS EVENT (
   id          BIGINT NOT NULL AUTO_INCREMENT,
-  name        VARCHAR(30) UNIQUE,
+  name        VARCHAR(30) /*UNIQUE*/,
   basePrice   DOUBLE,
   rating      ENUM ('LOW', 'MID', 'HIGH'),
   airDates    ARRAY,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS EVENT (
 
 CREATE TABLE IF NOT EXISTS AUDITORIUM (
  id            BIGINT NOT NULL AUTO_INCREMENT,
- name          VARCHAR(30) UNIQUE,
+ name          VARCHAR(30) /*UNIQUE*/,
  numberOfSeats BIGINT,
  vipSeats      ARRAY,
  PRIMARY KEY (`id`)
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS TICKET (
   user_id     BIGINT,
   event_id    BIGINT,
   dateTime    TIMESTAMP,
-  seat        BIGINT UNIQUE,
+  seat        BIGINT ,
   FOREIGN KEY (user_id) REFERENCES  user(id),
   FOREIGN KEY (event_id) REFERENCES  event(id)
 );

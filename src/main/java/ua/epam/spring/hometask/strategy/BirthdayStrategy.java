@@ -7,11 +7,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.NavigableSet;
 
+
 public class BirthdayStrategy implements DiscountStrategy {
 
     private static byte discount = 0;
 
     private static int airDaysUp = 0;
+
 
     public BirthdayStrategy() {
     }
