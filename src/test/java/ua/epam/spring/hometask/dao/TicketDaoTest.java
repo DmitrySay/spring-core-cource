@@ -62,7 +62,7 @@ public class TicketDaoTest extends AbstractJUnit4SpringContextTests {
         System.out.println(ticketDao.getAll());
         //autoincrement
         Ticket ticket = ticketDao.getById(1L);
-        System.out.println("ticket " +ticket);
+        System.out.println(ticket);
         Assert.assertEquals(ticket, ticketEtalon);
     }
 }

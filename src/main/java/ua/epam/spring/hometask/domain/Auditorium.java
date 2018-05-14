@@ -97,9 +97,9 @@ public class Auditorium extends DomainObject{
     @Override
     public String toString() {
         return "Auditorium{" +
-                "name='" + name + '\'' +
+                "  name='" + name + '\'' +
                 ", numberOfSeats=" + numberOfSeats +
                 ", vipSeats=" + vipSeats +
-                "} " + super.getId();
+                ", auditoriumId="+ super.getId()+"} ";
     }
 }

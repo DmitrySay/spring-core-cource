@@ -136,6 +136,6 @@ public class User extends DomainObject {
                 ", email='" + email + '\'' +
                 ", birthday=" + birthday +
                 ", tickets=" + tickets +
-                "} " + super.getId();
+                ", userId=" + super.getId()+ "} ";
     }
 }

@@ -226,6 +226,6 @@ public class Event extends DomainObject {
                 ", basePrice=" + basePrice +
                 ", rating=" + rating +
                 ", auditoriums=" + auditoriums +
-                "} " + super.getId();
+                ", eventId="+ super.getId()+"} ";
     }
 }

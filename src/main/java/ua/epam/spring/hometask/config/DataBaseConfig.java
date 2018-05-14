@@ -1,7 +1,10 @@
 package ua.epam.spring.hometask.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -11,26 +14,25 @@ import javax.sql.DataSource;
 
 
 @Configuration
+@PropertySource(value = {"classpath:database.properties"})
 public class DataBaseConfig {
-    private String className = "org.h2.Driver";
-    private String url = "jdbc:h2:mem:testdb;create=true";
-    private String user = "root";
-    private String password = "root";
+
+    @Autowired
+    Environment environment;
 
     @Bean
+    @Autowired
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
     @Bean
     public DataSource dataSource() {
-
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setDriverClassName(className);
-        driverManagerDataSource.setUrl(url);
-        driverManagerDataSource.setUsername(user);
-        driverManagerDataSource.setPassword(password);
-
+        driverManagerDataSource.setDriverClassName(environment.getRequiredProperty("db.driver"));
+        driverManagerDataSource.setUrl(environment.getRequiredProperty("db.url"));
+        driverManagerDataSource.setUsername(environment.getRequiredProperty("db.user"));
+        driverManagerDataSource.setPassword(environment.getRequiredProperty("db.password"));
 
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
@@ -38,5 +40,4 @@ public class DataBaseConfig {
                 .addScript("classpath:insert_script.sql")
                 .build();
     }
-
 }

@@ -95,6 +95,9 @@ public class UserDaoImpl implements UserDao {
                     user.getId()
             );
         }
+
+        Long userId = jdbcTemplate.queryForObject("SELECT id FROM USER ORDER BY id DESC LIMIT 1",  Long.class);
+        user.setId(userId);
         return user;
     }
 

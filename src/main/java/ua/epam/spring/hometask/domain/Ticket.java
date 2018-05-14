@@ -118,6 +118,6 @@ public class Ticket extends DomainObject implements Comparable<Ticket> {
                 ", event=" + event +
                 ", dateTime=" + dateTime +
                 ", seat=" + seat +
-                "} " + "ticketId= "+ super.getId();
+                ", ticketId= "+ super.getId()+"} ";
     }
 }
