@@ -15,7 +15,7 @@ import java.util.Set;
 @Service("auditoriumService")
 public class AuditoriumServiceImpl implements AuditoriumService {
 
-    @Autowired()
+    @Autowired
     private AuditoriumDao auditoriumDao;
 
 

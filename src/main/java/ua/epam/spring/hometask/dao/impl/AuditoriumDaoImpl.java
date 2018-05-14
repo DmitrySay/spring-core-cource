@@ -9,6 +9,8 @@ import ua.epam.spring.hometask.domain.Auditorium;
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 
@@ -59,11 +61,28 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
 
     @Override
     public Auditorium save(@Nonnull Auditorium auditorium) {
-        jdbcTemplate.update("INSERT INTO auditorium (name, numberOfSeats, vipSeats) VALUES (?,?,?)",
-                auditorium.getName(),
-                auditorium.getNumberOfSeats(),
-                auditorium.getVipSeats().toArray((new Long[0]))
-        );
+        Long count = 0L;
+
+        if (auditorium.getId() != null) {
+            count = jdbcTemplate.queryForObject("SELECT count(*) FROM AUDITORIUM where id =?", new Object[]{auditorium.getId()}, Long.class);
+        }
+
+        if (count.equals(0L)) {
+            jdbcTemplate.update("INSERT INTO auditorium (name, numberOfSeats, vipSeats) VALUES (?,?,?)",
+                    auditorium.getName(),
+                    auditorium.getNumberOfSeats(),
+                    auditorium.getVipSeats().toArray((new Long[0]))
+            );
+        } else {
+            jdbcTemplate.update("UPDATE auditorium SET name=?, numberOfSeats=?, vipSeats=? WHERE id =?",
+                    auditorium.getName(),
+                    auditorium.getNumberOfSeats(),
+                    auditorium.getVipSeats().toArray((new Long[0])),
+                    auditorium.getId()
+            );
+        }
+
+
         return auditorium;
     }
 
@@ -77,15 +96,7 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
 
         List<Auditorium> list = jdbcTemplate.query("SELECT * FROM auditorium WHERE id = ?", new Object[]{id},
                 (rs, rowNum) -> {
-                    Auditorium auditorium = new Auditorium();
-                    auditorium.setId(rs.getLong(1));
-                    auditorium.setName(rs.getString(2));
-                    auditorium.setNumberOfSeats(rs.getLong(3));
-                    Array vip_seats = rs.getArray(4);
-                    if (vip_seats != null) {
-                        Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
-                        auditorium.setVipSeats(vipSeats);
-                    }
+                    Auditorium auditorium = auditoriumMapper(rs, rowNum);
                     return auditorium;
                 });
         return list.isEmpty() ? null : list.get(0);
@@ -95,16 +106,21 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
     @Override
     public Collection<Auditorium> getAll() {
         return jdbcTemplate.query("SELECT * FROM auditorium", (rs, rowNum) -> {
-            Auditorium auditorium = new Auditorium();
-            auditorium.setId(rs.getLong(1));
-            auditorium.setName(rs.getString(2));
-            auditorium.setNumberOfSeats(rs.getLong(3));
-            Array vip_seats = rs.getArray(4);
-            if (vip_seats != null) {
-                Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
-                auditorium.setVipSeats(vipSeats);
-            }
+            Auditorium auditorium = auditoriumMapper(rs, rowNum);
             return auditorium;
         });
+    }
+
+    private Auditorium auditoriumMapper(ResultSet rs, int rowNum) throws SQLException {
+        Auditorium auditorium = new Auditorium();
+        auditorium.setId(rs.getLong("id"));
+        auditorium.setName(rs.getString("name"));
+        auditorium.setNumberOfSeats(rs.getLong("numberOfSeats"));
+        Array vip_seats = rs.getArray("vipSeats");
+        if (vip_seats != null) {
+            Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
+            auditorium.setVipSeats(vipSeats);
+        }
+        return auditorium;
     }
 }

@@ -9,6 +9,8 @@ import ua.epam.spring.hometask.domain.User;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,69 +23,40 @@ public class UserDaoImpl implements UserDao {
     public UserDaoImpl() {
     }
 
+    private User userMapper(ResultSet rs, int rowNum) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setFirstName(rs.getString("firstName"));
+        user.setLastName(rs.getString("lastName"));
+        user.setEmail(rs.getString("email"));
+        Date date = rs.getDate("birthDay");
+        if (null != date) {
+            user.setBirthday(date.toLocalDate());
+        }
+        return user;
+    }
+
     @Nullable
     @Override
     public User getUserByEmail(@Nonnull String email) {
         List<User> list = jdbcTemplate.query("SELECT * FROM user WHERE email = ?", new Object[]{email},
                 (rs, rowNum) -> {
-                    User user = new User();
-                    user.setId(rs.getLong(1));
-                    user.setFirstName(rs.getString(2));
-                    user.setLastName(rs.getString(3));
-                    user.setEmail(rs.getString(4));
-                    Date date = rs.getDate(5);
-                    if (null != date) {
-                        user.setBirthday(date.toLocalDate());
-                    }
+                    User user = userMapper(rs, rowNum);
                     return user;
-                });
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-
-    @Override
-    public User save(@Nonnull User user) {
-        jdbcTemplate.update("INSERT INTO user (firstName, lastName, email, birthDay) VALUES (?,?,?,?)",
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getBirthday()
-        );
-
-        List<User> list = jdbcTemplate.query("SELECT * FROM user WHERE email = ?", new Object[]{user.getEmail()},
-                (rs, rowNum) -> {
-                    User userNew = new User();
-                    userNew.setId(rs.getLong(1));
-                    userNew.setFirstName(rs.getString(2));
-                    userNew.setLastName(rs.getString(3));
-                    userNew.setEmail(rs.getString(4));
-                    Date date = rs.getDate(5);
-                    if (null != date) {
-                        userNew.setBirthday(date.toLocalDate());
-                    }
-                    return userNew;
                 });
         return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
     public void remove(@Nonnull User user) {
-        jdbcTemplate.update("DELETE FROM user where email = ?",  user.getEmail());
+        jdbcTemplate.update("DELETE FROM user where email = ?", user.getEmail());
     }
 
     @Override
     public User getById(@Nonnull Long id) {
         List<User> list = jdbcTemplate.query("SELECT * FROM user WHERE id = ?", new Object[]{id},
                 (rs, rowNum) -> {
-                    User user = new User();
-                    user.setId(rs.getLong(1));
-                    user.setFirstName(rs.getString(2));
-                    user.setLastName(rs.getString(3));
-                    user.setEmail(rs.getString(4));
-                    Date date = rs.getDate(5);
-                    if (null != date) {
-                        user.setBirthday(date.toLocalDate());
-                    }
+                    User user = userMapper(rs, rowNum);
                     return user;
                 });
         return list.isEmpty() ? null : list.get(0);
@@ -92,23 +65,44 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Collection<User> getAll() {
         return jdbcTemplate.query("SELECT * FROM user", (rs, rowNum) -> {
-            User user = new User();
-            user.setId(rs.getLong(1));
-            user.setFirstName(rs.getString(2));
-            user.setLastName(rs.getString(3));
-            user.setEmail(rs.getString(4));
-            Date date = rs.getDate(5);
-            if (null != date) {
-                user.setBirthday(date.toLocalDate());
-            }
+            User user = userMapper(rs, rowNum);
             return user;
         });
     }
 
-    /*  public static void main(String[] args) {
+    @Override
+    public User save(@Nonnull User user) {
+        Long count = 0L;
+
+        if (user.getId() != null) {
+            count = jdbcTemplate.queryForObject("SELECT count(*) FROM USER where id =?", new Object[]{user.getId()}, Long.class);
+        }
+
+
+        if (count.equals(0L)) {
+            jdbcTemplate.update("INSERT INTO user (firstName, lastName, email, birthDay) VALUES (?,?,?,?)",
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getBirthday()
+            );
+        } else {
+            jdbcTemplate.update("UPDATE USER SET firstName=?, lastName=?, email=?, birthDay=? WHERE id =?",
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getBirthday(),
+                    user.getId()
+            );
+        }
+        return user;
+    }
+
+
+/*    public static void main(String[] args) {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
         UserDao userDao = (UserDao) ctx.getBean("userDao");
-
+        System.out.println(userDao.getAll());
     }*/
 }
 

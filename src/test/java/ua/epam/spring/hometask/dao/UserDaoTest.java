@@ -65,6 +65,4 @@ public class UserDaoTest extends AbstractJUnit4SpringContextTests {
         int after = userDao.getAll().size();
         Assert.assertEquals(after, before - 1);
     }
-
-
 }
