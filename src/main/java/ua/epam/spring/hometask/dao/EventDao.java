@@ -8,4 +8,6 @@ public interface EventDao extends AbstractDomainObjectDao<Event> {
 
 
     public Event getEvent(@Nonnull Event event);
+
+    public Event getByName(@Nonnull String name);
 }

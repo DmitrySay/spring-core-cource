@@ -62,6 +62,7 @@ public class TicketDaoImpl implements TicketDao {
 
         if (count.equals(0L)) {
             jdbcTemplate.update("INSERT INTO TICKET (user_id, event_id, dateTime, seat) VALUES (?,?,?,?)",
+
                     ticket.getUser().getId(),
                     ticket.getEvent().getId(),
                     Timestamp.valueOf(ticket.getDateTime()),

@@ -46,3 +46,9 @@ CREATE TABLE IF NOT EXISTS TICKET (
   FOREIGN KEY (event_id) REFERENCES  event(id)
 );
 
+CREATE TABLE IF NOT EXISTS eventsByNameStorage (
+id          BIGINT NOT NULL AUTO_INCREMENT,
+event_name        VARCHAR(30),
+counter     BIGINT
+);
+

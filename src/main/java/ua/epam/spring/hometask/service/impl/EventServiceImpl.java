@@ -8,9 +8,7 @@ import ua.epam.spring.hometask.service.EventService;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -24,8 +22,7 @@ public class EventServiceImpl implements EventService {
     @Nullable
     @Override
     public Event getByName(@Nonnull String name) {
-        List<Event> eventList = new ArrayList<>(eventDao.getAll());
-        return eventList.stream().filter(e -> e.getName().equals(name)).findFirst().orElse(null);
+        return eventDao.getByName(name);
     }
 
     @Override
