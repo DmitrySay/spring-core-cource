@@ -2,7 +2,6 @@ package ua.epam.spring.hometask.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ua.epam.spring.hometask.dao.EventDao;
 import ua.epam.spring.hometask.domain.Auditorium;
@@ -13,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import java.sql.Array;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -94,26 +94,7 @@ public class EventDaoImpl implements EventDao {
     @Override
     public Collection<Event> getAll() {
         return jdbcTemplate.query("SELECT * FROM event", (ResultSet rs, int rowNum) -> {
-            Event event = new Event();
-            event.setId(rs.getLong(1));
-            event.setName(rs.getString(2));
-            event.setBasePrice(rs.getDouble(3));
-            String ratingSql = rs.getString(4);
-            EventRating rating = EventRating.valueOf(ratingSql);
-            event.setRating(rating);
-
-            Array array = rs.getArray(5);
-            Object[] objects = (Object[]) array.getArray();
-
-            NavigableSet<LocalDateTime> airDates = new TreeSet<>();
-
-            for (Object o : objects) {
-                Timestamp timestamp = (Timestamp) o;
-                LocalDateTime localDateTime = timestamp.toLocalDateTime();
-                airDates.add(localDateTime);
-            }
-
-            event.setAirDates(airDates);
+            Event event = createEvent(rs);
 
             //--------------------------------------------------------------------//
             NavigableMap<LocalDateTime, String> auditoriumsName = new TreeMap<>();
@@ -134,16 +115,7 @@ public class EventDaoImpl implements EventDao {
             auditoriumsName.entrySet().forEach(a -> {
                 jdbcTemplate.query("SELECT * FROM AUDITORIUM where name = ?", new Object[]{a.getValue()},
                         resultSet -> {
-                            Auditorium auditorium = new Auditorium();
-                            auditorium.setId(resultSet.getLong(1));
-                            auditorium.setName(resultSet.getString(2));
-                            auditorium.setNumberOfSeats(resultSet.getLong(3));
-                            Array vip_seats = resultSet.getArray(4);
-                            if (vip_seats != null) {
-                                Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
-                                auditorium.setVipSeats(vipSeats);
-                            }
-
+                            Auditorium auditorium = createAuditorium(resultSet);
                             auditoriums.put(a.getKey(), auditorium);
                         });
 
@@ -152,6 +124,40 @@ public class EventDaoImpl implements EventDao {
             return event;
 
         });
+    }
+
+
+    private Auditorium createAuditorium(ResultSet resultSet) throws SQLException {
+        Auditorium auditorium = new Auditorium();
+        auditorium.setId(resultSet.getLong(1));
+        auditorium.setName(resultSet.getString(2));
+        auditorium.setNumberOfSeats(resultSet.getLong(3));
+        Array vip_seats = resultSet.getArray(4);
+        if (vip_seats != null) {
+            Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
+            auditorium.setVipSeats(vipSeats);
+        }
+        return auditorium;
+    }
+
+    private Event createEvent(ResultSet rs) throws SQLException {
+        Event e = new Event();
+        e.setId(rs.getLong(1));
+        e.setName(rs.getString(2));
+        e.setBasePrice(rs.getDouble(3));
+        String ratingSql = rs.getString(4);
+        EventRating rating = EventRating.valueOf(ratingSql);
+        e.setRating(rating);
+        Array array = rs.getArray(5);
+        Object[] objects = (Object[]) array.getArray();
+        NavigableSet<LocalDateTime> airDates = new TreeSet<>();
+        for (Object o : objects) {
+            Timestamp timestamp = (Timestamp) o;
+            LocalDateTime localDateTime = timestamp.toLocalDateTime();
+            airDates.add(localDateTime);
+        }
+        e.setAirDates(airDates);
+        return e;
     }
 
     @Override
@@ -164,27 +170,7 @@ public class EventDaoImpl implements EventDao {
     @Override
     public Event getEvent(@Nonnull Event event) {
         List<Event> events = jdbcTemplate.query("SELECT * FROM event where name = ?", new Object[]{event.getName()}, (ResultSet rs, int rowNum) -> {
-            Event e = new Event();
-            e.setId(rs.getLong(1));
-            e.setName(rs.getString(2));
-            e.setBasePrice(rs.getDouble(3));
-            String ratingSql = rs.getString(4);
-            EventRating rating = EventRating.valueOf(ratingSql);
-            e.setRating(rating);
-
-            Array array = rs.getArray(5);
-            Object[] objects = (Object[]) array.getArray();
-
-            NavigableSet<LocalDateTime> airDates = new TreeSet<>();
-
-            for (Object o : objects) {
-                Timestamp timestamp = (Timestamp) o;
-                LocalDateTime localDateTime = timestamp.toLocalDateTime();
-                airDates.add(localDateTime);
-            }
-
-            e.setAirDates(airDates);
-
+            Event e = createEvent(rs);
 
             //--------------------------------------------------------------------//
             NavigableMap<LocalDateTime, String> auditoriumsName = new TreeMap<>();
@@ -200,23 +186,12 @@ public class EventDaoImpl implements EventDao {
 
 
             //--------------------------------------------------------------------//
-
-
             NavigableMap<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
 
             auditoriumsName.entrySet().forEach(a -> {
                 jdbcTemplate.query("SELECT * FROM AUDITORIUM where name = ?", new Object[]{a.getValue()},
                         resultSet -> {
-                            Auditorium auditorium = new Auditorium();
-                            auditorium.setId(resultSet.getLong(1));
-                            auditorium.setName(resultSet.getString(2));
-                            auditorium.setNumberOfSeats(resultSet.getLong(3));
-                            Array vip_seats = resultSet.getArray(4);
-                            if (vip_seats != null) {
-                                Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
-                                auditorium.setVipSeats(vipSeats);
-                            }
-
+                            Auditorium auditorium = createAuditorium(resultSet);
                             auditoriums.put(a.getKey(), auditorium);
                         });
 
@@ -224,38 +199,15 @@ public class EventDaoImpl implements EventDao {
             e.setAuditoriums(auditoriums);
 
             return e;
-
         });
 
         return events.isEmpty() ? null : events.get(0);
-
     }
 
     @Override
     public Event getByName(@Nonnull String name) {
-
         List<Event> events = jdbcTemplate.query("SELECT * FROM event where name = ?", new Object[]{name}, (ResultSet rs, int rowNum) -> {
-            Event e = new Event();
-            e.setId(rs.getLong(1));
-            e.setName(rs.getString(2));
-            e.setBasePrice(rs.getDouble(3));
-            String ratingSql = rs.getString(4);
-            EventRating rating = EventRating.valueOf(ratingSql);
-            e.setRating(rating);
-
-            Array array = rs.getArray(5);
-            Object[] objects = (Object[]) array.getArray();
-
-            NavigableSet<LocalDateTime> airDates = new TreeSet<>();
-
-            for (Object o : objects) {
-                Timestamp timestamp = (Timestamp) o;
-                LocalDateTime localDateTime = timestamp.toLocalDateTime();
-                airDates.add(localDateTime);
-            }
-
-            e.setAirDates(airDates);
-
+            Event e = createEvent(rs);
 
             //--------------------------------------------------------------------//
             NavigableMap<LocalDateTime, String> auditoriumsName = new TreeMap<>();
@@ -268,26 +220,13 @@ public class EventDaoImpl implements EventDao {
 
                         auditoriumsName.put(event_airdate, auditorium_name);
                     });
-
-
             //--------------------------------------------------------------------//
-
-
             NavigableMap<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
 
             auditoriumsName.entrySet().forEach(a -> {
                 jdbcTemplate.query("SELECT * FROM AUDITORIUM where name = ?", new Object[]{a.getValue()},
                         resultSet -> {
-                            Auditorium auditorium = new Auditorium();
-                            auditorium.setId(resultSet.getLong(1));
-                            auditorium.setName(resultSet.getString(2));
-                            auditorium.setNumberOfSeats(resultSet.getLong(3));
-                            Array vip_seats = resultSet.getArray(4);
-                            if (vip_seats != null) {
-                                Set<Long> vipSeats = new HashSet<>(Arrays.asList((Long[]) vip_seats.getArray()));
-                                auditorium.setVipSeats(vipSeats);
-                            }
-
+                            Auditorium auditorium = createAuditorium(resultSet);
                             auditoriums.put(a.getKey(), auditorium);
                         });
 
@@ -297,7 +236,6 @@ public class EventDaoImpl implements EventDao {
             return e;
 
         });
-
         return events.isEmpty() ? null : events.get(0);
     }
 }

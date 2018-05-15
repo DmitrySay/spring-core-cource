@@ -78,7 +78,6 @@ public class UserDaoImpl implements UserDao {
             count = jdbcTemplate.queryForObject("SELECT count(*) FROM USER where id =?", new Object[]{user.getId()}, Long.class);
         }
 
-
         if (count.equals(0L)) {
             jdbcTemplate.update("INSERT INTO user (firstName, lastName, email, birthDay) VALUES (?,?,?,?)",
                     user.getFirstName(),
@@ -102,7 +101,7 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-/*    public static void main(String[] args) {
+   /*   public static void main(String[] args) {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
         UserDao userDao = (UserDao) ctx.getBean("userDao");
         System.out.println(userDao.getAll());

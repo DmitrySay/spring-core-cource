@@ -44,7 +44,6 @@ public class TicketDaoImpl implements TicketDao {
             Event e = createEvent(rs);
             ticket.setUser(user);
             ticket.setEvent(e);
-
             return ticket;
         });
 
