@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.epam.spring.hometask.dao.CounterAspectDao;
+import ua.epam.spring.hometask.domain.Event;
 
 @Aspect
 @Component
@@ -23,6 +24,16 @@ public class CounterAspect {
     public void eventServiceGetByNameBeforeCall(JoinPoint joinPoint) {
         String eventName = (String) joinPoint.getArgs()[0];
         counterAspectDao.saveEventValueCouterByName(eventName);
+    }
+
+    @Pointcut("execution(* ua.epam.spring.hometask.service.impl.BookingServiceImpl.getTicketsPrice(..))")
+    private void bookingServiceGetTicketsPrice() {
+    }
+
+    @Before("bookingServiceGetTicketsPrice()")
+    public void bookingServiceGetTicketsPriceBeforeCall(JoinPoint joinPoint) {
+        Event event = (Event) joinPoint.getArgs()[0];
+        counterAspectDao.saveEventValueCouterByPrice(event.getName());
     }
 
 }

@@ -52,3 +52,10 @@ event_name        VARCHAR(30),
 counter     BIGINT
 );
 
+CREATE TABLE IF NOT EXISTS eventsByPriceStorage (
+id          BIGINT NOT NULL AUTO_INCREMENT,
+event_name        VARCHAR(30),
+counter     BIGINT
+);
+
+

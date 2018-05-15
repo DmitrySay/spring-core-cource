@@ -95,5 +95,15 @@ public class CounterAspectTest {
         Assert.assertTrue(result.equals(3L));
     }
 
+    @Test
+    public void saveEventValueCouterByPriceTest(){
+        bookingService.getTicketsPrice(eventEtalon, dateTime, userEtalon, seats);
+        bookingService.getTicketsPrice(eventEtalon, dateTime, userEtalon, seats);
+        bookingService.getTicketsPrice(eventEtalon, dateTime, userEtalon, seats);
+
+        Long result  = counterAspectDao.eventsByPriceStorageGetAll().get(0).get("New_Year_Party") ;
+        Assert.assertTrue(result.equals(3L));
+    }
+
 
 }

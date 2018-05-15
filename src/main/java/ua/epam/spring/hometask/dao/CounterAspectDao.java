@@ -9,4 +9,10 @@ public interface CounterAspectDao {
 
     public List<Map<String, Long>> eventsByNameStorageGetAll();
 
+    public List<Map<String, Long>>  eventsByPriceStorageGetAll();
+
+    void saveEventValueCouterByPrice(String eventName);
+
+    void saveEventValueCouterByTicket(String eventName);
+
 }
