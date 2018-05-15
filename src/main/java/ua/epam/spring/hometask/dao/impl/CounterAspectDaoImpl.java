@@ -19,32 +19,32 @@ public class CounterAspectDaoImpl implements CounterAspectDao {
     @Override
     public void saveEventValueCouterByName(String eventName) {
         Long count = 0L;
-        count = count(eventName);
+        count = countEventsByNameStorage(eventName);
         if (count > 0) {
-            Long counter = getByName(eventName)+1L;
-            update(eventName, counter);
+            Long counter = getByNameEventsByNameStorage(eventName)+1L;
+            updateEventsByNameStorage(eventName, counter);
         } else {
-            insert(eventName);
+            insertEventsByNameStorage(eventName);
         }
     }
 
-    public Long count(String eventName) {
+    public Long countEventsByNameStorage(String eventName) {
         Long count = 0L;
         count = jdbcTemplate.queryForObject("SELECT count(*) FROM eventsByNameStorage where event_name =?", new Object[]{eventName}, Long.class);
         return count;
     }
 
-    public Long getByName(String eventName) {
+    public Long getByNameEventsByNameStorage(String eventName) {
         Long counter = 0L;
         counter = jdbcTemplate.queryForObject("SELECT counter FROM eventsByNameStorage where event_name = ?", new Object[]{eventName}, Long.class);
         return counter;
     }
 
-    public void insert(String eventName) {
+    public void insertEventsByNameStorage(String eventName) {
         jdbcTemplate.update("INSERT INTO eventsByNameStorage (event_name, counter) VALUES (?,?)", eventName, 1L);
     }
 
-    public void update(String eventName, Long counter) {
+    public void updateEventsByNameStorage(String eventName, Long counter) {
         jdbcTemplate.update("UPDATE eventsByNameStorage SET event_name=?, counter=? WHERE event_name =?", eventName, counter, eventName);
     }
 
