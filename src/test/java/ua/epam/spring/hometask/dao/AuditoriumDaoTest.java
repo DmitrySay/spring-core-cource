@@ -26,6 +26,7 @@ public class AuditoriumDaoTest {
     @Test
     public void getAllTest() {
         Collection<Auditorium> list = auditoriumDao.getAll();
+        System.out.println(list);
         Assert.assertTrue(list.size() == numberOfAuditorium);
     }
 

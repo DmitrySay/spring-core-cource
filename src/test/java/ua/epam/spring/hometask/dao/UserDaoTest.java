@@ -24,15 +24,17 @@ public class UserDaoTest extends AbstractJUnit4SpringContextTests {
 
     @BeforeClass
     public static void initUsersMap() {
-        userEtalon = new User("Andrey", "Pupkin", "andrey@epam.com", LocalDate.of(1985, Month.MAY, 1));
-        user = new User("Andrey", "Pupkin", "test@epam.com", LocalDate.of(1950, Month.MAY, 1));
+        userEtalon = new User("Andrey", "Pupkin", "andrey@epam.com", LocalDate.of(1985, Month.MARCH, 13));
+        user = new User("test", "test", "test@epam.com", LocalDate.of(1950, Month.MAY, 1));
     }
 
 
     @Test
     public void getUserByEmailTest() {
-        User user = userDao.getUserByEmail("andrey@epam.com");
-        Assert.assertEquals(user, userEtalon);
+        User userDB = userDao.getUserByEmail("andrey@epam.com");
+        System.out.println(userDB);
+        System.out.println(userEtalon);
+        Assert.assertEquals(userDB, userEtalon);
     }
 
     @Test

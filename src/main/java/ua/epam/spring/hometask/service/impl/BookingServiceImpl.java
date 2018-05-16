@@ -37,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public double getTicketsPrice(@Nonnull Event event, @Nonnull LocalDateTime dateTime, @Nullable User user, @Nonnull Set<Long> seats) {
         Event currentEvent = eventDao.getEvent(event);
-        Double basePrice = currentEvent.getBasePrice(99.9);
+        Double basePrice = currentEvent.getBasePrice();
         EventRating rating = currentEvent.getRating();
         NavigableMap<LocalDateTime, Auditorium> auditoriums = currentEvent.getAuditoriums();
         Auditorium aud = auditoriums.get(dateTime);

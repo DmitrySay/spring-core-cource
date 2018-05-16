@@ -61,8 +61,6 @@ public class BookingServiceTest {
         ticket1.setUser(user);
         ticket2.setUser(user);
 
-        //ticketDao.save(ticket1);
-       // ticketDao.save(ticket2);
         userEtalon = new User(1L, "Andrey", "Pupkin", "andrey@epam.com");
         seats = new HashSet<>(Arrays.asList(10L, 70L));
     }

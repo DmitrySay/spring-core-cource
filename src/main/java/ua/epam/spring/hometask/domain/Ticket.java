@@ -1,19 +1,22 @@
 package ua.epam.spring.hometask.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * @author Yuriy_Tkach
  */
+@Setter
+@Getter
+@ToString(callSuper = true)
 public class Ticket extends DomainObject implements Comparable<Ticket> {
-
     private User user;
-
     private Event event;
-
     private LocalDateTime dateTime;
-
     private long seat;
 
     public Ticket() {
@@ -23,38 +26,6 @@ public class Ticket extends DomainObject implements Comparable<Ticket> {
         this.user = user;
         this.event = event;
         this.dateTime = dateTime;
-        this.seat = seat;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public long getSeat() {
-        return seat;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public void setSeat(long seat) {
         this.seat = seat;
     }
 
@@ -109,15 +80,5 @@ public class Ticket extends DomainObject implements Comparable<Ticket> {
             result = Long.compare(seat, other.getSeat());
         }
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Ticket{" +
-                "user=" + user +
-                ", event=" + event +
-                ", dateTime=" + dateTime +
-                ", seat=" + seat +
-                ", ticketId= "+ super.getId()+"} ";
     }
 }
