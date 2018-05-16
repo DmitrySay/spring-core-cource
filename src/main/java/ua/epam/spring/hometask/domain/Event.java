@@ -1,9 +1,6 @@
 package ua.epam.spring.hometask.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +14,8 @@ import java.util.*;
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event extends DomainObject {
 
     private String name;
@@ -24,19 +23,6 @@ public class Event extends DomainObject {
     private double basePrice;
     private EventRating rating;
     private NavigableMap<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
-
-    public Event() {
-    }
-
-    public Event(String name, NavigableSet<LocalDateTime> airDates, double basePrice, EventRating rating,
-                 NavigableMap<LocalDateTime, Auditorium> auditoriums) {
-        this.name = name;
-        this.airDates = airDates;
-        this.basePrice = basePrice;
-        this.rating = rating;
-        this.auditoriums = auditoriums;
-    }
-
 
     /**
      * Checks if event is aired on particular <code>dateTime</code> and assigns
