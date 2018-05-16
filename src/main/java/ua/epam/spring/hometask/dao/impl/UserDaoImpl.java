@@ -2,6 +2,7 @@ package ua.epam.spring.hometask.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ua.epam.spring.hometask.dao.UserDao;
 import ua.epam.spring.hometask.domain.User;
@@ -23,7 +24,7 @@ public class UserDaoImpl implements UserDao {
     public UserDaoImpl() {
     }
 
-    private User userMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static final RowMapper<User> userRowMapper = (rs, rowNum) -> {
         User user = new User();
         user.setId(rs.getLong("id"));
         user.setFirstName(rs.getString("firstName"));
@@ -34,16 +35,30 @@ public class UserDaoImpl implements UserDao {
             user.setBirthday(date.toLocalDate());
         }
         return user;
+    };
+
+    private static final class UserRowMapper implements RowMapper<User> {
+
+        @Override
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            User user = new User();
+            user.setId(rs.getLong("id"));
+            user.setFirstName(rs.getString("firstName"));
+            user.setLastName(rs.getString("lastName"));
+            user.setEmail(rs.getString("email"));
+            Date date = rs.getDate("birthDay");
+            if (null != date) {
+                user.setBirthday(date.toLocalDate());
+            }
+            return user;
+        }
     }
 
     @Nullable
     @Override
     public User getUserByEmail(@Nonnull String email) {
-        List<User> list = jdbcTemplate.query("SELECT * FROM user WHERE email = ?", new Object[]{email},
-                (rs, rowNum) -> {
-                    User user = userMapper(rs, rowNum);
-                    return user;
-                });
+        List<User> list = jdbcTemplate.query("SELECT * FROM user WHERE email = ?", new Object[]{email}, new UserRowMapper());
+
         return list.isEmpty() ? null : list.get(0);
     }
 
@@ -54,20 +69,13 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getById(@Nonnull Long id) {
-        List<User> list = jdbcTemplate.query("SELECT * FROM user WHERE id = ?", new Object[]{id},
-                (rs, rowNum) -> {
-                    User user = userMapper(rs, rowNum);
-                    return user;
-                });
+        List<User> list = jdbcTemplate.query("SELECT * FROM user WHERE id = ?", new Object[]{id}, userRowMapper);
         return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
     public Collection<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM user", (rs, rowNum) -> {
-            User user = userMapper(rs, rowNum);
-            return user;
-        });
+        return jdbcTemplate.query("SELECT * FROM user", userRowMapper);
     }
 
     @Override
@@ -95,17 +103,34 @@ public class UserDaoImpl implements UserDao {
             );
         }
 
-        Long userId = jdbcTemplate.queryForObject("SELECT id FROM USER ORDER BY id DESC LIMIT 1",  Long.class);
+        Long userId = jdbcTemplate.queryForObject("SELECT id FROM USER ORDER BY id DESC LIMIT 1", Long.class);
         user.setId(userId);
         return user;
     }
+}
 
 
-   /*   public static void main(String[] args) {
+    /*  public static void main(String[] args) {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
         UserDao userDao = (UserDao) ctx.getBean("userDao");
         System.out.println(userDao.getAll());
     }*/
-}
 
+   /*
+        private static final RowMapper<User> userRowMapper = new RowMapper<User>() {
 
+        @Override
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            User user = new User();
+            user.setId(rs.getLong("id"));
+            user.setFirstName(rs.getString("firstName"));
+            user.setLastName(rs.getString("lastName"));
+            user.setEmail(rs.getString("email"));
+            Date date = rs.getDate("birthDay");
+            if (null != date) {
+                user.setBirthday(date.toLocalDate());
+            }
+            return user;
+        }
+    };
+     */

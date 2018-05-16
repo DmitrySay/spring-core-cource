@@ -2,6 +2,7 @@ package ua.epam.spring.hometask.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ua.epam.spring.hometask.dao.AuditoriumDao;
 import ua.epam.spring.hometask.domain.Auditorium;
@@ -9,8 +10,6 @@ import ua.epam.spring.hometask.domain.Auditorium;
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import java.sql.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 
@@ -58,7 +57,6 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
 
     }
 
-
     @Override
     public Auditorium save(@Nonnull Auditorium auditorium) {
         Long count = 0L;
@@ -81,8 +79,6 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
                     auditorium.getId()
             );
         }
-
-
         return auditorium;
     }
 
@@ -93,35 +89,23 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
 
     @Override
     public Auditorium getById(@Nonnull Long id) {
-
-        List<Auditorium> list = jdbcTemplate.query("SELECT * FROM auditorium WHERE id = ?", new Object[]{id},
-                (rs, rowNum) -> {
-                    Auditorium auditorium = auditoriumMapper(rs, rowNum);
-                    return auditorium;
-                });
+        List<Auditorium> list = jdbcTemplate.query("SELECT * FROM auditorium WHERE id = ?", new Object[]{id}, auditoriumRowMapperRowMapper);
         return list.isEmpty() ? null : list.get(0);
     }
 
 
     @Override
     public Collection<Auditorium> getAll() {
-        return jdbcTemplate.query("SELECT * FROM auditorium", (rs, rowNum) -> {
-            Auditorium auditorium = auditoriumMapper(rs, rowNum);
-            return auditorium;
-        });
+        return jdbcTemplate.query("SELECT * FROM auditorium", auditoriumRowMapperRowMapper);
     }
 
     @Override
-    public Auditorium getByName(@Nonnull String name){
-        List<Auditorium> list = jdbcTemplate.query("SELECT * FROM auditorium WHERE name = ?", new Object[]{name},
-                (rs, rowNum) -> {
-                    Auditorium auditorium = auditoriumMapper(rs, rowNum);
-                    return auditorium;
-                });
+    public Auditorium getByName(@Nonnull String name) {
+        List<Auditorium> list = jdbcTemplate.query("SELECT * FROM auditorium WHERE name = ?", new Object[]{name}, auditoriumRowMapperRowMapper);
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private Auditorium auditoriumMapper(ResultSet rs, int rowNum) throws SQLException {
+    private static final RowMapper<Auditorium> auditoriumRowMapperRowMapper = (rs, rowNum) -> {
         Auditorium auditorium = new Auditorium();
         auditorium.setId(rs.getLong("id"));
         auditorium.setName(rs.getString("name"));
@@ -132,5 +116,5 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
             auditorium.setVipSeats(vipSeats);
         }
         return auditorium;
-    }
+    };
 }
