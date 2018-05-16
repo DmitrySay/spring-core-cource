@@ -32,8 +32,6 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     @Nullable
     @Override
     public Auditorium getByName(@Nonnull String name) {
-        Collection<Auditorium> list = auditoriumDao.getAll();
-        return list.stream().filter(e -> e.getName().equals(name)).findFirst().orElse(null);
-
+        return auditoriumDao.getByName(name);
     }
 }

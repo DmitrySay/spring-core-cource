@@ -111,6 +111,16 @@ public class AuditoriumDaoImpl implements AuditoriumDao {
         });
     }
 
+    @Override
+    public Auditorium getByName(@Nonnull String name){
+        List<Auditorium> list = jdbcTemplate.query("SELECT * FROM auditorium WHERE name = ?", new Object[]{name},
+                (rs, rowNum) -> {
+                    Auditorium auditorium = auditoriumMapper(rs, rowNum);
+                    return auditorium;
+                });
+        return list.isEmpty() ? null : list.get(0);
+    }
+
     private Auditorium auditoriumMapper(ResultSet rs, int rowNum) throws SQLException {
         Auditorium auditorium = new Auditorium();
         auditorium.setId(rs.getLong("id"));
